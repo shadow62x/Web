@@ -1,717 +1,140 @@
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CatBypasser</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0078d7;
-            --primary-alt: #00a2ff;
-            --secondary: #6264a7;
-            --accent: #ffaa44;
-            --background: #f3f2f1;
-            --card: #ffffff;
-            --text: #323130;
-            --subtle-text: #605e5c;
-            --shadow: rgba(0, 0, 0, 0.1);
-            --ripple: rgba(0, 120, 215, 0.1);
-            --backdrop-light: linear-gradient(135deg, #0078d7 0%, #83c9f4 100%);
-            --backdrop-opacity-light: 0.1;
-            --acrylic-background: rgba(243, 242, 241, 0.85);
-        }
-        
-        .dark-theme {
-            --primary: #4cc2ff;
-            --primary-alt: #00a2ff;
-            --secondary: #8a8cff;
-            --accent: #ff9d2f;
-            --background: #1f1f1f;
-            --card: #2d2d2d;
-            --text: #f5f5f5;
-            --subtle-text: #a0a0a0;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --ripple: rgba(76, 194, 255, 0.15);
-            --backdrop-light: linear-gradient(135deg, #0052a3 0%, #4c7db8 100%);
-            --backdrop-opacity-light: 0.15;
-            --acrylic-background: rgba(31, 31, 31, 0.9);
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Instrument Sans', sans-serif;
-            font-weight: 700;
-            background-color: var(--background);
-            color: var(--text);
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.4s ease-in-out;
-            cursor: none;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        h1 {
-            font-size: 8rem;
-            margin-bottom: 2rem;
-            position: relative;
-            display: inline-block;
-            color: transparent;
-            background: linear-gradient(45deg, var(--primary), var(--primary-alt));
-            -webkit-background-clip: text;
-            background-clip: text;
-            filter: drop-shadow(0 0 25px rgba(0, 120, 215, 0.3));
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-            animation: titleReveal 1.5s cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
-            transition: all 0.4s ease-in-out;
-        }
-        
-        .dark-theme h1 {
-            filter: drop-shadow(0 0 25px rgba(76, 194, 255, 0.4));
-        }
-        
-        @keyframes titleReveal {
-            0% {
-                opacity: 0;
-                transform: translateY(30px) scale(0.95);
-                letter-spacing: -0.5rem;
-            }
-            30% {
-                opacity: 1;
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-                letter-spacing: -0.1rem;
-            }
-        }
-        
-        h1:after {
-            content: attr(data-text);
-            position: absolute;
-            left: 0;
-            top: 0;
-            color: transparent;
-            background: linear-gradient(45deg, var(--primary), var(--primary-alt));
-            -webkit-background-clip: text;
-            background-clip: text;
-            z-index: -1;
-            animation: glitch-anim 3.5s infinite alternate-reverse;
-        }
-        
-        @keyframes glitch-anim {
-            0% {
-                transform: translate(0);
-                clip-path: inset(0 0 0 0);
-            }
-            2% {
-                transform: translate(-2px, 2px);
-                clip-path: inset(10% 0 80% 0);
-            }
-            4% {
-                transform: translate(2px, -2px);
-                clip-path: inset(70% 0 20% 0);
-            }
-            6% {
-                transform: translate(-2px, 2px);
-                clip-path: inset(20% 0 60% 0);
-            }
-            8% {
-                transform: translate(0);
-                clip-path: inset(0 0 0 0);
-            }
-            100% {
-                transform: translate(0);
-                clip-path: inset(0 0 0 0);
-            }
-        }
-        
-        .acrylic-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--acrylic-background);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            z-index: -1;
-            transition: background 0.4s ease-in-out;
-        }
-        
-        .backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--backdrop-light);
-            opacity: var(--backdrop-opacity-light);
-            z-index: -2;
-            transition: opacity 0.4s ease-in-out;
-            animation: backgroundPulse 15s ease-in-out infinite;
-        }
-        
-        @keyframes backgroundPulse {
-            0%, 100% {
-                opacity: var(--backdrop-opacity-light);
-                transform: scale(1);
-            }
-            50% {
-                opacity: calc(var(--backdrop-opacity-light) * 1.5);
-                transform: scale(1.05);
-            }
-        }
-        
-        .particles-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-        }
-        
-        .particle {
-            position: absolute;
-            background-color: var(--primary);
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: float-particle ease-in-out infinite;
-            pointer-events: none;
-        }
-        
-        @keyframes float-particle {
-            0%, 100% {
-                transform: translateY(0) translateX(0);
-            }
-            50% {
-                transform: translateY(-20px) translateX(10px);
-            }
-        }
-        
-        .cards {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-top: 2rem;
-            perspective: 1000px;
-        }
-        
-        .card {
-            background: var(--card);
-            border-radius: 8px;
-            padding: 2rem;
-            width: 250px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            opacity: 0;
-            transform: translateY(50px) rotateX(10deg);
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-        }
-        
-        .card:nth-child(1) {
-            animation: cardReveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.6s;
-        }
-        
-        .card:nth-child(2) {
-            animation: cardReveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 0.8s;
-        }
-        
-        .card:nth-child(3) {
-            animation: cardReveal 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards 1s;
-        }
-        
-        @keyframes cardReveal {
-            to {
-                opacity: 1;
-                transform: translateY(0) rotateX(0);
-            }
-        }
-        
-        .card:hover {
-            transform: translateY(-15px) rotateX(5deg) scale(1.05) !important;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            z-index: 1;
-        }
-        
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(120deg, 
-                transparent 0%, 
-                transparent 40%,
-                rgba(255, 255, 255, 0.1) 45%, 
-                rgba(255, 255, 255, 0.1) 50%, 
-                transparent 55%, 
-                transparent 100%);
-            transform: translateX(-100%);
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-            pointer-events: none;
-        }
-        
-        .card:hover::before {
-            transform: translateX(100%);
-        }
-        
-        .card h3 {
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-            color: var(--primary);
-            transition: all 0.4s ease-in-out;
-            position: relative;
-            display: inline-block;
-        }
-        
-        .card h3::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 50%;
-            background: var(--primary);
-            transition: all 0.4s ease-in-out;
-        }
-        
-        .card:hover h3::after {
-            width: 100%;
-            left: 0;
-        }
-        
-        .card p {
-            color: var(--subtle-text);
-            font-weight: normal;
-            transition: all 0.4s ease-in-out;
-            transform: translateY(0);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .card:hover p {
-            transform: translateY(-5px);
-        }
-        
-        .card-icon {
-            width: 40px;
-            height: 40px;
-            margin: 0 auto 1.5rem;
-            fill: var(--primary);
-            transition: all 0.4s ease-in-out;
-            transform-origin: center;
-            display: block;
-        }
-        
-        .card:hover .card-icon {
-            transform: scale(1.2) rotate(10deg);
-            fill: var(--accent);
-        }
-        
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--ripple);
-            transform: scale(0);
-            animation: ripple 0.8s cubic-bezier(0, 0, 0.2, 1);
-            pointer-events: none;
-        }
-        
-        @keyframes ripple {
-            to {
-                transform: scale(6);
-                opacity: 0;
-            }
-        }
-        
-        .reveal-line {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--primary), var(--primary-alt));
-            transition: width 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.4s ease-in-out;
-            z-index: 2;
-        }
-        
-        .card:hover .reveal-line {
-            width: 100%;
-            box-shadow: 0 0 10px rgba(0, 120, 215, 0.5);
-        }
-        
-        .dark-theme .card:hover .reveal-line {
-            box-shadow: 0 0 10px rgba(76, 194, 255, 0.5);
-        }
-        
-        .shadow-element {
-            position: absolute;
-            pointer-events: none;
-            transition: all 0.8s ease-in-out;
-            filter: blur(50px);
-            opacity: 0.5;
-            border-radius: 50%;
-        }
-        
-        .shadow-1 {
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, rgba(0, 120, 215, 0.3) 0%, rgba(0, 120, 215, 0) 70%);
-            top: -250px;
-            left: -250px;
-            animation: pulsate 15s infinite ease-in-out;
-        }
-        
-        .shadow-2 {
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(131, 201, 244, 0.3) 0%, rgba(131, 201, 244, 0) 70%);
-            bottom: -300px;
-            right: -300px;
-            animation: pulsate 20s infinite ease-in-out reverse 2s;
-        }
-        
-        .shadow-3 {
-            width: 400px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(255, 170, 68, 0.2) 0%, rgba(255, 170, 68, 0) 70%);
-            top: 50%;
-            left: 10%;
-            transform: translateY(-50%);
-            animation: pulsate 18s infinite ease-in-out 1s;
-        }
-        
-        .dark-theme .shadow-1 {
-            background: radial-gradient(circle, rgba(76, 194, 255, 0.25) 0%, rgba(76, 194, 255, 0) 70%);
-        }
-        
-        .dark-theme .shadow-2 {
-            background: radial-gradient(circle, rgba(138, 140, 255, 0.25) 0%, rgba(138, 140, 255, 0) 70%);
-        }
-        
-        .dark-theme .shadow-3 {
-            background: radial-gradient(circle, rgba(255, 157, 47, 0.2) 0%, rgba(255, 157, 47, 0) 70%);
-        }
-        
-        @keyframes pulsate {
-            0%, 100% {
-                transform: scale(1) translate(0, 0);
-                opacity: 0.5;
-            }
-            50% {
-                transform: scale(1.1) translate(20px, -20px);
-                opacity: 0.7;
-            }
-        }
-        
-        .depth-container {
-            perspective: 1000px;
-            transform-style: preserve-3d;
-        }
-        
-        .cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 9999;
-            transition: all 0.1s ease;
-            transition-property: width, height, border;
-        }
-        
-        .cursor-dot {
-            position: fixed;
-            width: 5px;
-            height: 5px;
-            background: var(--primary);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 10000;
-            transition: background 0.4s ease-in-out;
-        }
-        
-        .expand {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--primary);
-            background: rgba(0, 120, 215, 0.05);
-        }
-        
-        .toggle-theme {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: var(--card);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            cursor: pointer;
-            box-shadow: 0 2px 10px var(--shadow);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            opacity: 0;
-            animation: fadeIn 0.5s forwards ease-out 1.5s;
-            transition: all 0.4s ease-in-out;
-        }
-        
-        .toggle-theme:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 5px 15px var(--shadow);
-        }
-        
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-        
-        .theme-icon {
-            width: 24px;
-            height: 24px;
-            fill: var(--text);
-            transition: fill 0.4s ease-in-out, transform 0.4s ease-in-out;
-        }
-        
-        .toggle-theme:hover .theme-icon {
-            transform: rotate(15deg);
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 4rem;
-            }
-            
-            .cards {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .card {
-                width: 100%;
-                max-width: 300px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="acrylic-background"></div>
-    <div class="backdrop"></div>
-    <div class="particles-container" id="particles"></div>
-    <div class="shadow-element shadow-1"></div>
-    <div class="shadow-element shadow-2"></div>
-    <div class="shadow-element shadow-3"></div>
-    <div class="cursor" id="cursor"></div>
-    <div class="cursor-dot" id="cursor-dot"></div>
-    
-    <button class="toggle-theme" id="themeToggle">
-        <svg class="theme-icon" viewBox="0 0 24 24">
-            <path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"></path>
-        </svg>
-    </button>
-    
-    <div class="container depth-container">
-        <h1 id="mainTitle" data-text="CatBypasser">CatBypasser</h1>
-        
-        <div class="cards">
-            <div class="card" id="card1">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M12,12H19C18.47,16.11 15.72,19.78 12,20.92V12H5V6.3L12,3.19M12,1L3,5V11C3,16.55 6.84,21.73 12,23C17.16,21.73 21,16.55 21,11V5L12,1Z"></path>
-                </svg>
-                <h3>Best</h3>
-                <p>We are the best pick for chat bypassing.</p>
-                <div class="reveal-line"></div>
-            </div>
-            
-            <div class="card" id="card2">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,5A3,3 0 0,1 15,8A3,3 0 0,1 12,11A3,3 0 0,1 9,8A3,3 0 0,1 12,5M17.13,17C15.92,18.85 14.11,20.24 12,20.92C9.89,20.24 8.08,18.85 6.87,17C6.53,16.5 6.24,16 6,15.47C6,13.82 8.71,12.47 12,12.47C15.29,12.47 18,13.79 18,15.47C17.76,16 17.47,16.5 17.13,17Z"></path>
-                </svg>
-                <h3>Undeteted</h3>
-                <p>CatBypasser is undetected no matter what. Even if you bypass!</p>
-                <div class="reveal-line"></div>
-            </div>
-            
-            <div class="card" id="card3">
-                <svg class="card-icon" viewBox="0 0 24 24">
-                    <path d="M13,3V9H21V3M13,21H21V11H13M3,21H11V15H3M3,13H11V3H3V13Z"></path>
-                </svg>
-                <h3>Stable</h3>
-                <p>Every feature is stable and works just fine.</p>
-                <div class="reveal-line"></div>
-            </div>
-        </div>
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+import React, { useState } from 'react';
+
+function HomeTab() {
+  return (
+    <header className="flex-grow flex flex-col items-center justify-center text-center px-6">
+      <h1 className="text-6xl font-extrabold text-white mb-6 drop-shadow-lg">CatBypasser</h1>
+      <p className="text-xl text-white mb-8 max-w-2xl drop-shadow-md">
+        Bypass Roblox's chat filters with style. Stable, smart, and effective.
+      </p>
+      <div className="space-x-4">
+        <button className="px-8 py-3 bg-white text-gray-900 rounded-full font-medium hover:scale-105 transform transition">
+          Get Started
+        </button>
+        <button className="px-8 py-3 border-2 border-white text-white rounded-full font-medium hover:scale-105 transform transition">
+          Learn More
+        </button>
+      </div>
+    </header>
+  );
+}
+
+function ApiTab() {
+  return (
+    <div className="p-8 max-w-3xl mx-auto text-white">
+      <h2 className="text-3xl font-bold mb-4">CatBypasser API Documentation</h2>
+      <p className="mb-4">Base URL: <code className="bg-gray-900 px-2 py-1 rounded">https://catbypasser.api.shadow62.dev</code></p>
+      <h3 className="text-2xl font-semibold mt-6 mb-2">POST /bypass</h3>
+      <pre className="bg-black bg-opacity-50 p-4 rounded text-sm overflow-auto">
+        {`Request Body:
+{
+  "text": "your message here",
+  "mode": "fast" // or "smart"
+}`}        
+      </pre>
+      <p className="mt-2">Returns:</p>
+      <pre className="bg-black bg-opacity-50 p-4 rounded text-sm overflow-auto">
+        {`{
+  "bypassed": "text with bypass characters"
+}`}
+      </pre>
     </div>
-    
-    <script>
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.classList.add('particle');
-                
-                const size = Math.random() * 6 + 2;
-                particle.style.width = `${size}px`;
-                particle.style.height = `${size}px`;
-                
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                
-                const duration = Math.random() * 20 + 10;
-                const delay = Math.random() * 10;
-                particle.style.animationDuration = `${duration}s`;
-                particle.style.animationDelay = `${delay}s`;
-                
-                particlesContainer.appendChild(particle);
-            }
-        }
-        
-        function setupParallax() {
-            document.addEventListener('mousemove', (e) => {
-                const depth = 20;
-                const mouseX = (e.clientX - window.innerWidth / 2) / depth;
-                const mouseY = (e.clientY - window.innerHeight / 2) / depth;
-                
-                const title = document.getElementById('mainTitle');
-                title.style.transform = `translate3d(${-mouseX * 1.5}px, ${-mouseY * 1.5}px, 0) rotateY(${mouseX / 10}deg) rotateX(${-mouseY / 20}deg)`;
-                
-                const cards = document.querySelectorAll('.card');
-                cards.forEach((card, index) => {
-                    const cardDepth = (index + 1) * 5;
-                    const cardMoveX = -mouseX * (cardDepth / depth);
-                    const cardMoveY = -mouseY * (cardDepth / depth);
-                    const rotateY = mouseX / (15 - index * 2);
-                    const rotateX = -mouseY / (30 - index * 5);
-                    
-                    card.style.transform = `translate3d(${cardMoveX}px, ${cardMoveY}px, ${index * 10}px) rotateY(${rotateY}deg) rotateX(${rotateX}deg)`;
-                });
-                
-                document.querySelector('.shadow-1').style.transform = `translate(${-mouseX * 3}px, ${-mouseY * 3}px)`;
-                document.querySelector('.shadow-2').style.transform = `translate(${mouseX * 4}px, ${mouseY * 4}px)`;
-                document.querySelector('.shadow-3').style.transform = `translate(${-mouseX * 2}px, ${-mouseY * 2}px) translateY(-50%)`;
-            });
-        }
-        
-        function setupCustomCursor() {
-            const cursor = document.getElementById('cursor');
-            const cursorDot = document.getElementById('cursor-dot');
-            
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-                
-                setTimeout(() => {
-                    cursorDot.style.left = e.clientX + 'px';
-                    cursorDot.style.top = e.clientY + 'px';
-                }, 50);
-            });
-            
-            const interactiveElements = document.querySelectorAll('.card, .toggle-theme');
-            interactiveElements.forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    cursor.classList.add('expand');
-                });
-                
-                el.addEventListener('mouseleave', () => {
-                    cursor.classList.remove('expand');
-                });
-            });
-        }
-        
-        function setupRippleEffect() {
-            const cards = document.querySelectorAll('.card');
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    const rect = this.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    
-                    const ripple = document.createElement('div');
-                    ripple.classList.add('ripple');
-                    ripple.style.left = `${x}px`;
-                    ripple.style.top = `${y}px`;
-                    
-                    this.appendChild(ripple);
-                    
-                    this.style.transform = 'scale(0.98)';
-                    setTimeout(() => {
-                        this.style.transform = '';
-                    }, 200);
-                    
-                    setTimeout(() => {
-                        ripple.remove();
-                    }, 800);
-                });
-            });
-        }
-        
-        function setupThemeToggle() {
-            const themeToggle = document.getElementById('themeToggle');
-            themeToggle.addEventListener('click', () => {
-                document.body.classList.toggle('dark-theme');
-                
-                const isDarkTheme = document.body.classList.contains('dark-theme');
-                themeToggle.innerHTML = isDarkTheme 
-                    ? '<svg class="theme-icon" viewBox="0 0 24 24"><path d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"></path></svg>'
-                    : '<svg class="theme-icon" viewBox="0 0 24 24"><path d="M12,18C11.11,18 10.26,17.8 9.5,17.45C11.56,16.5 13,14.42 13,12C13,9.58 11.56,7.5 9.5,6.55C10.26,6.2 11.11,6 12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31L23.31,12L20,8.69Z"></path></svg>';
-                
-                const cards = document.querySelectorAll('.card');
-                cards.forEach((card, index) => {
-                    setTimeout(() => {
-                        card.style.transform = 'translateY(-20px)';
-                        setTimeout(() => {
-                            card.style.transform = '';
-                        }, 200);
-                    }, index * 100);
-                });
-            });
-            
-            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.body.classList.add('dark-theme');
-                themeToggle.innerHTML = '<svg class="theme-icon" viewBox="0 0 24 24"><path d="M12,7A5,5 0 0,1 17,12A5,5 0 0,1 12,17A5,5 0 0,1 7,12A5,5 0 0,1 12,7M12,9A3,3 0 0,0 9,12A3,3 0 0,0 12,15A3,3 0 0,0 15,12A3,3 0 0,0 12,9Z"></path></svg>';
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            createParticles();
-            setupParallax();
-            setupCustomCursor();
-            setupRippleEffect();
-            setupThemeToggle();
-        });
-    </script>
-</body>
-</html>
+  );
+}
+
+function PlaygroundTab() {
+  const [input, setInput] = useState('');
+  const [svgUrl, setSvgUrl] = useState(null);
+
+  const generateSvg = () => {
+    const bypassed = input.split('').join('ٖ');
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='600' height='100'>
+      <rect width='100%' height='100%' fill='black'/>
+      <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='24' font-family='monospace'>${bypassed}</text>
+    </svg>`;
+    const blob = new Blob([svg], { type: 'image/svg+xml' });
+    setSvgUrl(URL.createObjectURL(blob));
+  };
+
+  return (
+    <div className="p-8 text-white text-center">
+      <h2 className="text-3xl font-bold mb-4">Playground</h2>
+      <p className="mb-4">Type a message below to see it bypassed and rendered as an image.</p>
+      <input
+        type="text"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        className="w-full max-w-xl px-4 py-2 rounded text-black mb-4"
+        placeholder="Enter your text here"
+      />
+      <br />
+      <button onClick={generateSvg} className="px-6 py-2 bg-white text-black rounded font-semibold hover:scale-105 transition">
+        Generate
+      </button>
+      {svgUrl && (
+        <div className="mt-6">
+          <h3 className="text-xl mb-2">Result</h3>
+          <img src={svgUrl} alt="Bypassed Text" className="mx-auto border rounded shadow-lg" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function App() {
+  const [activeTab, setActiveTab] = useState('Home');
+  const tabs = ['Home', 'API', 'Playground'];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-purple-600 via-pink-500 to-red-500 flex flex-col">
+      <nav className="w-full bg-white bg-opacity-20 backdrop-blur-md">
+        <ul className="max-w-4xl mx-auto flex space-x-8 p-4">
+          {tabs.map((tab) => (
+            <li
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`cursor-pointer px-4 py-2 rounded-md transition ${
+                activeTab === tab
+                  ? 'bg-white bg-opacity-80 text-gray-900 font-semibold'
+                  : 'text-white hover:bg-white hover:bg-opacity-30'
+              }`}
+            >
+              {tab}
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <main className="flex-grow">
+        {activeTab === 'Home' && <HomeTab />}
+        {activeTab === 'API' && <ApiTab />}
+        {activeTab === 'Playground' && <PlaygroundTab />}
+      </main>
+
+      <footer className="w-full py-4 text-center text-white text-sm">
+        © 2025 CatBypasser. All rights reserved.
+      </footer>
+    </div>
+  );
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+}
