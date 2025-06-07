@@ -2,22 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CatBypasser</title>
+  <title>Cropped Iframe</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
+      overflow: hidden;
+    }
+    .iframe-wrapper {
+      width: 100%;
+      height: 5vh; /* show only 5% of the viewport height */
+      overflow: hidden;
+      position: relative;
     }
     iframe {
-      border: none;
       width: 100%;
-      height: 100%;
+      height: 100vh;
+      border: none;
+      position: absolute;
+      top: -95vh; /* push it up to only show bottom 5% */
     }
   </style>
 </head>
 <body>
-  <iframe src="https://www.youware.com/project/pn3x466pbs" allowfullscreen></iframe>
+  <div class="iframe-wrapper">
+    <iframe src="https://www.youware.com/project/pn3x466pbs" allowfullscreen></iframe>
+  </div>
 </body>
 </html>
